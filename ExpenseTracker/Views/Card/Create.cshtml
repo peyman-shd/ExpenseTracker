@@ -1,0 +1,32 @@
+@model ExpenseTracker.Models.Card
+
+<h1>Add Card</h1>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="CardName" class="form-label"></label>
+        <input asp-for="CardName" class="form-control" />
+        <span asp-validation-for="CardName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Limit" class="form-label"></label>
+        <input asp-for="Limit" class="form-control" />
+        <span asp-validation-for="Limit" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CurrentBalance" class="form-label"></label>
+        <input asp-for="CurrentBalance" class="form-control" />
+        <span asp-validation-for="CurrentBalance" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CardType" class="form-label"></label>
+        <input asp-for="CardType" class="form-control" />
+        <span asp-validation-for="CardType" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>

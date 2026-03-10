@@ -1,0 +1,56 @@
+@model List<ExpenseTracker.Models.Transaction>
+
+<h1>Transactions</h1>
+
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Filter by Card</label>
+            <select name="cardId" class="form-control" onchange="this.form.submit()">
+                <option value="">All Cards</option>
+
+                @foreach (var card in ViewBag.Cards)
+                {
+                    if (ViewBag.SelectedCardId != null && ViewBag.SelectedCardId == card.CardId)
+                    {
+                        <option value="@card.CardId" selected>@card.CardName</option>
+                    }
+                    else
+                    {
+                        <option value="@card.CardId">@card.CardName</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Transaction</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Amount</th>
+        <th>Type</th>
+        <th>Category</th>
+        <th>Date</th>
+        <th>Card</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var transaction in Model)
+    {
+        <tr>
+            <td>@transaction.Title</td>
+            <td>@transaction.Amount</td>
+            <td>@transaction.TransactionType</td>
+            <td>@transaction.Category</td>
+            <td>@transaction.TransactionDate.ToString("yyyy-MM-dd")</td>
+            <td>@transaction.Card.CardName</td>
+        </tr>
+    }
+    </tbody>
+</table>

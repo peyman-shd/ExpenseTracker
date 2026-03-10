@@ -1,0 +1,29 @@
+@model List<ExpenseTracker.Models.Card>
+
+<h1>Cards</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Card</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Card Name</th>
+        <th>Limit</th>
+        <th>Balance</th>
+        <th>Type</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var card in Model)
+    {
+        <tr>
+            <td>@card.CardName</td>
+            <td>@card.Limit</td>
+            <td>@card.CurrentBalance</td>
+            <td>@card.CardType</td>
+        </tr>
+    }
+    </tbody>
+</table>
