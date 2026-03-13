@@ -1,0 +1,53 @@
+@model ExpenseTracker.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1>Dashboard</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 mb-3">
+            <h4>Total Income</h4>
+            <p>$@Model.TotalIncome.ToString("N2")</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 mb-3">
+            <h4>Total Expense</h4>
+            <p>$@Model.TotalExpense.ToString("N2")</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 mb-3">
+            <h4>Net Balance</h4>
+            @if (Model.NetBalance >= 0)
+            {
+                <p class="text-success">$@Model.NetBalance.ToString("N2")</p>
+            }
+            else
+            {
+                <p class="text-danger">$@Model.NetBalance.ToString("N2")</p>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card p-3 mb-3">
+            <h4>Total Cards</h4>
+            <p>@Model.TotalCards</p>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card p-3 mb-3">
+            <h4>Total Transactions</h4>
+            <p>@Model.TotalTransactions</p>
+        </div>
+    </div>
+</div>

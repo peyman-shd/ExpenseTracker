@@ -76,4 +76,31 @@ public class TransactionController : Controller
 
         return RedirectToAction("Index");
     }
+    public async Task<IActionResult> Delete(int id)
+    {
+        var transaction = await _context.Transactions
+            .Include(t => t.Card)
+            .FirstOrDefaultAsync(t => t.TransactionId == id);
+
+        if (transaction == null)
+        {
+            return NotFound();
+        }
+
+        return View(transaction);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> DeleteConfirmed(int transactionId)
+    {
+        var transaction = await _context.Transactions.FindAsync(transactionId);
+
+        if (transaction != null)
+        {
+            _context.Transactions.Remove(transaction);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
 }
