@@ -13,6 +13,7 @@
         <th>Limit</th>
         <th>Balance</th>
         <th>Type</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -23,6 +24,10 @@
             <td>@card.Limit</td>
             <td>@card.CurrentBalance</td>
             <td>@card.CardType</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@card.CardId" class="btn btn-warning btn-sm">Edit</a>
+                <a asp-action="Delete" asp-route-id="@card.CardId" class="btn btn-danger btn-sm">Delete</a>
+            </td>
         </tr>
     }
     </tbody>

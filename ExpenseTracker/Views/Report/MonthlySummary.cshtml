@@ -1,0 +1,110 @@
+@model ExpenseTracker.Models.MonthlySummaryViewModel
+
+@{
+    ViewData["Title"] = "Monthly Summary";
+}
+
+<h1>Monthly Summary</h1>
+
+<form asp-action="MonthlySummary" method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-3">
+            <label class="form-label">Year</label>
+            <input type="number" name="year" value="@Model.SelectedYear" class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Month</label>
+            <select name="month" class="form-control">
+                @{
+                    var months = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
+                }
+
+                @for (int i = 1; i <= 12; i++)
+                {
+                    if (i == Model.SelectedMonth)
+                    {
+                        <option value="@i" selected>@months[i - 1]</option>
+                    }
+                    else
+                    {
+                        <option value="@i">@months[i - 1]</option>
+                    }
+                }
+            </select>
+        </div>
+        
+        <div class="col-md-3">
+            <label class="form-label">Card</label>
+            <select name="cardId" class="form-control">
+                <option value="">All Cards</option>
+
+                @foreach (var card in Model.Cards)
+                {
+                    if (Model.SelectedCardId == card.CardId)
+                    {
+                        <option value="@card.CardId" selected>@card.CardName</option>
+                    }
+                    else
+                    {
+                        <option value="@card.CardId">@card.CardName</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 mb-3">
+            <h4>Total Income</h4>
+            <p>$@Model.TotalIncome.ToString("N2")</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 mb-3">
+            <h4>Total Expense</h4>
+            <p>$@Model.TotalExpense.ToString("N2")</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3 mb-3">
+            <h4>Net Balance</h4>
+            <p>$@Model.NetBalance.ToString("N2")</p>
+        </div>
+    </div>
+</div>
+<h3>Transactions</h3>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Amount</th>
+        <th>Type</th>
+        <th>Category</th>
+        <th>Date</th>
+        <th>Card</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var transaction in Model.Transactions)
+    {
+        <tr>
+            <td>@transaction.Title</td>
+            <td>$@transaction.Amount.ToString("N2")</td>
+            <td>@transaction.TransactionType</td>
+            <td>@transaction.Category</td>
+            <td>@transaction.TransactionDate.ToString("yyyy-MM-dd")</td>
+            <td>@transaction.Card?.CardName</td>
+        </tr>
+    }
+    </tbody>
+</table>

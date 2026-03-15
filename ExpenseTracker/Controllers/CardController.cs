@@ -38,6 +38,66 @@ public class CardController : Controller
         await _context.SaveChangesAsync();
         return RedirectToAction("Index");
     }
+    public async Task<IActionResult> Edit(int id)
+    {
+        var card = await _context.Cards.FindAsync(id);
+
+        if (card == null)
+        {
+            return NotFound();
+        }
+
+        return View(card);
+    }
+    [HttpPost]
+    public async Task<IActionResult> Edit(Card card)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(card);
+        }
+
+        var existingCard = await _context.Cards.FindAsync(card.CardId);
+
+        if (existingCard == null)
+        {
+            return NotFound();
+        }
+
+        existingCard.CardName = card.CardName;
+        existingCard.Limit = card.Limit;
+        existingCard.CurrentBalance = card.CurrentBalance;
+        existingCard.CardType = card.CardType;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+    public async Task<IActionResult> Delete(int id)
+    {
+        var card = await _context.Cards.FindAsync(id);
+
+        if (card == null)
+        {
+            return NotFound();
+        }
+
+        return View(card);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> DeleteConfirmed(int cardId)
+    {
+        var card = await _context.Cards.FindAsync(cardId);
+
+        if (card != null)
+        {
+            _context.Cards.Remove(card);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
 }
 
     

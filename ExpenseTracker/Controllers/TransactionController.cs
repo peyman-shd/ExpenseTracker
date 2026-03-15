@@ -103,4 +103,44 @@ public class TransactionController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+    public async Task<IActionResult> Edit(int id)
+    {
+        var transaction = await _context.Transactions.FindAsync(id);
+
+        if (transaction == null)
+        {
+            return NotFound();
+        }
+
+        ViewBag.Cards = await _context.Cards.ToListAsync();
+
+        return View(transaction);
+    }
+    [HttpPost]
+    public async Task<IActionResult> Edit(Transaction transaction)
+    {
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Cards = await _context.Cards.ToListAsync();
+            return View(transaction);
+        }
+
+        var existingTransaction = await _context.Transactions.FindAsync(transaction.TransactionId);
+
+        if (existingTransaction == null)
+        {
+            return NotFound();
+        }
+
+        existingTransaction.Title = transaction.Title;
+        existingTransaction.Amount = transaction.Amount;
+        existingTransaction.TransactionType = transaction.TransactionType;
+        existingTransaction.Category = transaction.Category;
+        existingTransaction.TransactionDate = transaction.TransactionDate;
+        existingTransaction.CardId = transaction.CardId;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
 }

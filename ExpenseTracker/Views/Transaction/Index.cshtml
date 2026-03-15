@@ -52,6 +52,8 @@
             <td>@transaction.TransactionDate.ToString("yyyy-MM-dd")</td>
             <td>@transaction.Card.CardName</td>
             <td>
+                <a asp-action="Edit" asp-route-id="@transaction.TransactionId" class="btn btn-warning btn-sm">Edit</a>
+
                 <a asp-action="Delete" asp-route-id="@transaction.TransactionId" class="btn btn-danger btn-sm">Delete</a>
             </td>
         </tr>
