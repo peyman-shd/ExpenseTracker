@@ -18,10 +18,11 @@
     <div class="mb-3">
         <label asp-for="TransactionType" class="form-label"></label>
 
-        <select asp-for="TransactionType" class="form-control">
+        <select asp-for="TransactionType" id="transactionType" class="form-control">
             <option value="">Select Type</option>
             <option value="Expense">Expense</option>
             <option value="Income">Income</option>
+            <option value="Transfer">Transfer</option>
         </select>
 
         <span asp-validation-for="TransactionType" class="text-danger"></span>
@@ -67,6 +68,37 @@
         <span asp-validation-for="CardId" class="text-danger"></span>
     </div>
 
+    <div class="mb-3" id="toCardContainer" style="display:none;">
+        <label asp-for="ToCardId" class="form-label">To Card</label>
+        <select asp-for="ToCardId" class="form-control">
+            <option value="">Select Destination Card</option>
+
+            @foreach (var card in ViewBag.Cards)
+            {
+                <option value="@card.CardId">@card.CardName</option>
+            }
+        </select>
+    </div>
+
     <button type="submit" class="btn btn-success">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </form>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const typeDropdown = document.getElementById("transactionType");
+        const toCardDiv = document.getElementById("toCardContainer");
+
+        function toggleToCard() {
+            if (typeDropdown.value === "Transfer") {
+                toCardDiv.style.display = "block";
+            } else {
+                toCardDiv.style.display = "none";
+            }
+        }
+
+        typeDropdown.addEventListener("change", toggleToCard);
+
+        // initial check
+        toggleToCard();
+    });
+</script>

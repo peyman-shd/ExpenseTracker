@@ -24,6 +24,14 @@ public class Transaction
     public DateTime TransactionDate { get; set; }
 
     public int CardId { get; set; }
-
+    
+    public int? ToCardId { get; set; }
+    
     public Card? Card { get; set; }
+    
+    public bool IsInstallment { get; set; }
+
+    public int? NumberOfInstallments { get; set; }
+
+    public decimal? InstallmentAmount { get; set; }
 }

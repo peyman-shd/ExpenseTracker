@@ -11,4 +11,6 @@ public class DashboardViewModel
     public int TotalCards { get; set; }
 
     public int TotalTransactions { get; set; }
+    
+    public List<DashboardCardSummary> CardSummaries { get; set; } = new();
 }

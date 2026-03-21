@@ -12,6 +12,8 @@ public class MonthlySummaryViewModel
 
     public decimal NetBalance { get; set; }
     
+    public decimal OverallBalance { get; set; }
+    
     public int? SelectedCardId { get; set; }
     
     public List<Transaction> Transactions { get; set; } = new();

@@ -8,9 +8,8 @@ public class Card
 
     [Required]
     public string CardName { get; set; }
-
-    [Required]
-    public decimal Limit { get; set; }
+    
+    public decimal? Limit { get; set; }
 
     [Required]
     public decimal CurrentBalance { get; set; }
@@ -18,5 +17,5 @@ public class Card
     [Required]
     public string CardType { get; set; }
 
-    public int UserId { get; set; }
+    public string UserId { get; set; } = string.Empty;
 }

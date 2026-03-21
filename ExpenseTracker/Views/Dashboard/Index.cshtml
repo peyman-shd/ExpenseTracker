@@ -36,18 +36,35 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card p-3 mb-3">
-            <h4>Total Cards</h4>
-            <p>@Model.TotalCards</p>
-        </div>
-    </div>
+<h3>Card Summary</h3>
 
-    <div class="col-md-6">
-        <div class="card p-3 mb-3">
-            <h4>Total Transactions</h4>
-            <p>@Model.TotalTransactions</p>
-        </div>
-    </div>
-</div>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Card Name</th>
+        <th>Card Type</th>
+        <th>Current Balance</th>
+        <th>Current Debt</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var card in Model.CardSummaries)
+    {
+        <tr>
+            <td>@card.CardName</td>
+            <td>@card.CardType</td>
+            <td>$@card.CurrentBalance.ToString("N2")</td>
+            <td>
+                @if (card.CardType == "Credit")
+                {
+                    @:$@card.CurrentDebt.ToString("N2")
+                }
+                else
+                {
+                    @:-
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

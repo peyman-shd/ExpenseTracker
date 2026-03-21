@@ -1,10 +1,13 @@
+using System.Security.Claims;
 using ExpenseTracker.Data;
 using ExpenseTracker.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTracker.Controllers;
 
+[Authorize]
 public class CardController : Controller
 {
     private readonly ExpenseTrackerDbContext _context;
@@ -16,7 +19,12 @@ public class CardController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var cards = await _context.Cards.ToListAsync();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var cards = await _context.Cards
+            .Where(c => c.UserId == userId)
+            .ToListAsync();
+
         return View(cards);
     }
 
@@ -33,14 +41,20 @@ public class CardController : Controller
             return View(card);
         }
 
-        card.UserId = 1;
+        card.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
         await _context.Cards.AddAsync(card);
         await _context.SaveChangesAsync();
-        return RedirectToAction("Index");
+
+        return RedirectToAction(nameof(Index));
     }
+
     public async Task<IActionResult> Edit(int id)
     {
-        var card = await _context.Cards.FindAsync(id);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var card = await _context.Cards
+            .FirstOrDefaultAsync(c => c.CardId == id && c.UserId == userId);
 
         if (card == null)
         {
@@ -49,6 +63,7 @@ public class CardController : Controller
 
         return View(card);
     }
+
     [HttpPost]
     public async Task<IActionResult> Edit(Card card)
     {
@@ -57,7 +72,10 @@ public class CardController : Controller
             return View(card);
         }
 
-        var existingCard = await _context.Cards.FindAsync(card.CardId);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var existingCard = await _context.Cards
+            .FirstOrDefaultAsync(c => c.CardId == card.CardId && c.UserId == userId);
 
         if (existingCard == null)
         {
@@ -73,9 +91,13 @@ public class CardController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
     public async Task<IActionResult> Delete(int id)
     {
-        var card = await _context.Cards.FindAsync(id);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var card = await _context.Cards
+            .FirstOrDefaultAsync(c => c.CardId == id && c.UserId == userId);
 
         if (card == null)
         {
@@ -84,11 +106,14 @@ public class CardController : Controller
 
         return View(card);
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> DeleteConfirmed(int cardId)
     {
-        var card = await _context.Cards.FindAsync(cardId);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var card = await _context.Cards
+            .FirstOrDefaultAsync(c => c.CardId == cardId && c.UserId == userId);
 
         if (card != null)
         {
@@ -99,5 +124,3 @@ public class CardController : Controller
         return RedirectToAction(nameof(Index));
     }
 }
-
-    
