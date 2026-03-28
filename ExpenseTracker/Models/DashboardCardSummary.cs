@@ -10,5 +10,9 @@ namespace ExpenseTracker.Models;
 
         public decimal CurrentDebt { get; set; }
         
+        public decimal InstallmentPortion { get; set; }
+        
+        public decimal RegularDebt { get; set; }
+        
         public List<DashboardCardSummary> CardSummaries { get; set; } = new();
     }

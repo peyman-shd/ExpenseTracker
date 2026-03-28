@@ -19,4 +19,6 @@ public class MonthlySummaryViewModel
     public List<Transaction> Transactions { get; set; } = new();
     
     public List<Card> Cards { get; set; } = new();
+    
+    public List<MonthlyInstallmentSummary> Installments { get; set; } = new();
 }

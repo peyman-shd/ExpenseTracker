@@ -38,21 +38,43 @@ namespace ExpenseTracker.Controllers
                             t.TransactionDate.Month == currentMonth)
                 .ToListAsync();
 
+            var currentMonthInstallments = await _context.InstallmentPayments
+                .Include(i => i.Transaction)
+                .Where(i => i.Transaction != null &&
+                            userCardIds.Contains(i.Transaction.CardId) &&
+                            i.DueYear == currentYear &&
+                            i.DueMonth == currentMonth &&
+                            i.IsPaid)
+                .ToListAsync();
+
             var totalIncome = currentMonthTransactions
                 .Where(t => t.TransactionType == "Income")
                 .Sum(t => t.Amount);
 
-            var totalExpense = currentMonthTransactions
-                .Where(t => t.TransactionType == "Expense")
+            var normalExpense = currentMonthTransactions
+                .Where(t => t.TransactionType == "Expense" && !t.IsInstallment)
                 .Sum(t => t.Amount);
+
+            var paidInstallmentExpense = currentMonthInstallments
+                .Sum(i => i.Amount);
+
+            var totalExpense = normalExpense + paidInstallmentExpense;
 
             var allTransactions = await _context.Transactions
                 .Where(t => userCardIds.Contains(t.CardId))
                 .ToListAsync();
 
+            var allInstallments = await _context.InstallmentPayments
+                .Include(i => i.Transaction)
+                .Where(i => i.Transaction != null &&
+                            userCardIds.Contains(i.Transaction.CardId))
+                .ToListAsync();
+
             var cardSummaries = cards.Select(card =>
             {
                 decimal currentDebt = 0;
+                decimal installmentPortion = 0;
+                decimal regularDebt = 0;
 
                 if (card.CardType == "Credit")
                 {
@@ -65,6 +87,19 @@ namespace ExpenseTracker.Controllers
                         .Sum(t => t.Amount);
 
                     currentDebt = totalCreditExpenses - totalCreditPayments;
+
+                    installmentPortion = allInstallments
+                        .Where(i => i.Transaction != null &&
+                                    i.Transaction.CardId == card.CardId &&
+                                    !i.IsPaid)
+                        .Sum(i => i.Amount);
+
+                    regularDebt = currentDebt - installmentPortion;
+
+                    if (regularDebt < 0)
+                    {
+                        regularDebt = 0;
+                    }
                 }
 
                 return new DashboardCardSummary
@@ -72,7 +107,9 @@ namespace ExpenseTracker.Controllers
                     CardName = card.CardName,
                     CardType = card.CardType,
                     CurrentBalance = card.CurrentBalance,
-                    CurrentDebt = currentDebt
+                    CurrentDebt = currentDebt,
+                    InstallmentPortion = installmentPortion,
+                    RegularDebt = regularDebt
                 };
             }).ToList();
 

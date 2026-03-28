@@ -80,9 +80,35 @@
         </select>
     </div>
 
+    <div class="mb-3">
+        <label asp-for="IsInstallment" class="form-label"></label>
+        <input asp-for="IsInstallment" type="checkbox" class="form-check-input" id="isInstallment" />
+    </div>
+
+    <div id="installmentFields" style="display:none;">
+        <div class="mb-3">
+            <label asp-for="NumberOfInstallments" class="form-label"></label>
+            <input asp-for="NumberOfInstallments" class="form-control" />
+            <span asp-validation-for="NumberOfInstallments" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="InstallmentAmount" class="form-label"></label>
+            <input asp-for="InstallmentAmount" class="form-control" />
+            <span asp-validation-for="InstallmentAmount" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="InstallmentStartDate" class="form-label"></label>
+            <input asp-for="InstallmentStartDate" type="date" class="form-control" />
+            <span asp-validation-for="InstallmentStartDate" class="text-danger"></span>
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-success">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </form>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const typeDropdown = document.getElementById("transactionType");
@@ -97,8 +123,25 @@
         }
 
         typeDropdown.addEventListener("change", toggleToCard);
-
-        // initial check
+        
         toggleToCard();
     });
 </script>
+
+@section Scripts {
+    <script>
+        const installmentCheckbox = document.getElementById("isInstallment");
+        const installmentFields = document.getElementById("installmentFields");
+
+        function toggleInstallmentFields() {
+            if (installmentCheckbox.checked) {
+                installmentFields.style.display = "block";
+            } else {
+                installmentFields.style.display = "none";
+            }
+        }
+
+        installmentCheckbox.addEventListener("change", toggleInstallmentFields);
+        toggleInstallmentFields();
+    </script>
+}

@@ -74,6 +74,33 @@ public class TransactionController : Controller
             return View(transaction);
         }
 
+        if (transaction.IsInstallment)
+        {
+            if (!transaction.NumberOfInstallments.HasValue || transaction.NumberOfInstallments <= 0)
+            {
+                ModelState.AddModelError("NumberOfInstallments", "Please enter number of installments.");
+            }
+
+            if (!transaction.InstallmentAmount.HasValue || transaction.InstallmentAmount <= 0)
+            {
+                ModelState.AddModelError("InstallmentAmount", "Please enter installment amount.");
+            }
+
+            if (!transaction.InstallmentStartDate.HasValue)
+            {
+                ModelState.AddModelError("InstallmentStartDate", "Please select start date.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Cards = await _context.Cards
+                    .Where(c => c.UserId == userId)
+                    .ToListAsync();
+
+                return View(transaction);
+            }
+        }
+
         var card = await _context.Cards
             .FirstOrDefaultAsync(c => c.CardId == transaction.CardId && c.UserId == userId);
 
@@ -132,8 +159,40 @@ public class TransactionController : Controller
             destinationCard.CurrentBalance += transaction.Amount;
         }
 
+        if (transaction.InstallmentStartDate.HasValue)
+        {
+            transaction.InstallmentStartDate = DateTime.SpecifyKind(
+                transaction.InstallmentStartDate.Value,
+                DateTimeKind.Utc);
+        }
+
         _context.Transactions.Add(transaction);
         await _context.SaveChangesAsync();
+
+        if (transaction.IsInstallment &&
+            transaction.NumberOfInstallments.HasValue &&
+            transaction.NumberOfInstallments.Value > 0 &&
+            transaction.InstallmentAmount.HasValue &&
+            transaction.InstallmentStartDate.HasValue)
+        {
+            for (int i = 0; i < transaction.NumberOfInstallments.Value; i++)
+            {
+                var dueDate = transaction.InstallmentStartDate.Value.AddMonths(i);
+
+                var installmentPayment = new InstallmentPayment
+                {
+                    TransactionId = transaction.TransactionId,
+                    DueYear = dueDate.Year,
+                    DueMonth = dueDate.Month,
+                    Amount = transaction.InstallmentAmount.Value,
+                    IsPaid = false
+                };
+
+                _context.InstallmentPayments.Add(installmentPayment);
+            }
+
+            await _context.SaveChangesAsync();
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -172,6 +231,33 @@ public class TransactionController : Controller
                 .ToListAsync();
 
             return View(transaction);
+        }
+
+        if (transaction.IsInstallment)
+        {
+            if (!transaction.NumberOfInstallments.HasValue || transaction.NumberOfInstallments <= 0)
+            {
+                ModelState.AddModelError("NumberOfInstallments", "Please enter number of installments.");
+            }
+
+            if (!transaction.InstallmentAmount.HasValue || transaction.InstallmentAmount <= 0)
+            {
+                ModelState.AddModelError("InstallmentAmount", "Please enter installment amount.");
+            }
+
+            if (!transaction.InstallmentStartDate.HasValue)
+            {
+                ModelState.AddModelError("InstallmentStartDate", "Please select start date.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Cards = await _context.Cards
+                    .Where(c => c.UserId == userId)
+                    .ToListAsync();
+
+                return View(transaction);
+            }
         }
 
         var userCards = await _context.Cards
@@ -262,6 +348,13 @@ public class TransactionController : Controller
             newDestinationCard.CurrentBalance += transaction.Amount;
         }
 
+        if (transaction.InstallmentStartDate.HasValue)
+        {
+            transaction.InstallmentStartDate = DateTime.SpecifyKind(
+                transaction.InstallmentStartDate.Value,
+                DateTimeKind.Utc);
+        }
+
         existingTransaction.Title = transaction.Title;
         existingTransaction.Amount = transaction.Amount;
         existingTransaction.TransactionType = transaction.TransactionType;
@@ -272,6 +365,7 @@ public class TransactionController : Controller
         existingTransaction.IsInstallment = transaction.IsInstallment;
         existingTransaction.NumberOfInstallments = transaction.NumberOfInstallments;
         existingTransaction.InstallmentAmount = transaction.InstallmentAmount;
+        existingTransaction.InstallmentStartDate = transaction.InstallmentStartDate;
 
         await _context.SaveChangesAsync();
 

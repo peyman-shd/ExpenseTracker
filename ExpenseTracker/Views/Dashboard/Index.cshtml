@@ -57,7 +57,26 @@
             <td>
                 @if (card.CardType == "Credit")
                 {
-                    @:$@card.CurrentDebt.ToString("N2")
+                    @if (card.InstallmentPortion > 0)
+                    {
+                        <div class="text-danger" style="font-size: 1.1em; font-weight: 700;">
+                            Regular: $@card.RegularDebt.ToString("N2")
+                        </div>
+
+                        <div style="font-size: 0.95em; font-weight: 600; margin-top: 4px;">
+                            Total: $@card.CurrentDebt.ToString("N2")
+                        </div>
+
+                        <div class="text-warning" style="font-size: 0.85em; margin-top: 2px;">
+                            Installment: $@card.InstallmentPortion.ToString("N2")
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <strong>$@card.CurrentDebt.ToString("N2")</strong>
+                        </div>
+                    }
                 }
                 else
                 {
