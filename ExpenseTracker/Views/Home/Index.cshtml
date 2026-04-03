@@ -1,8 +1,137 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold display-4 mb-3">Personal Expense Tracker</h1>
+        <p class="text-muted fs-5 mx-auto" style="max-width: 760px;">
+            Manage your income, expenses, cards, balances, installment payments, and monthly reports in one place.
+        </p>
+    </div>
+
+    <!-- Main Quick Actions -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Card" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 home-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="home-icon mb-3">🏦</div>
+                        <h5 class="fw-bold text-dark mb-2">Cards</h5>
+                        <p class="text-muted mb-0">Manage your debit and credit cards and track balances.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Transaction" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 home-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="home-icon mb-3">💳</div>
+                        <h5 class="fw-bold text-dark mb-2">Transactions</h5>
+                        <p class="text-muted mb-0">Add and manage income, expense, and transfer transactions.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Dashboard" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 home-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="home-icon mb-3">📊</div>
+                        <h5 class="fw-bold text-dark mb-2">Dashboard</h5>
+                        <p class="text-muted mb-0">View your balances, debt, and financial overview.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Report" asp-action="MonthlySummary" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 home-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="home-icon mb-3">📁</div>
+                        <h5 class="fw-bold text-dark mb-2">Reports</h5>
+                        <p class="text-muted mb-0">Review monthly summary, installments, and charts.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Highlight Section -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-5 text-center">
+            <h3 class="fw-bold mb-3">Everything from one clean home page</h3>
+            <p class="text-muted mb-4">
+                Use this page as the main entry point to your app instead of navigating with multiple tabs.
+            </p>
+
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a asp-controller="Transaction" asp-action="Create" class="btn btn-primary px-4">+ Add Transaction</a>
+                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-dark px-4">Open Dashboard</a>
+                <a asp-controller="Report" asp-action="MonthlySummary" class="btn btn-outline-success px-4">View Report</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Notes -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Income & Expense Tracking</h5>
+                    <p class="text-muted mb-0">
+                        Record daily financial activity and keep your data organized and easy to review.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Installment Management</h5>
+                    <p class="text-muted mb-0">
+                        Track installment purchases, monitor paid items, and keep debt details clear.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Reports & Insights</h5>
+                    <p class="text-muted mb-0">
+                        Review your monthly summary and understand your financial situation better.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<style>
+    .home-card {
+        transition: all 0.2s ease-in-out;
+        border-radius: 16px;
+    }
+
+    .home-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0.5rem 1.2rem rgba(0,0,0,.12) !important;
+    }
+
+    .home-icon {
+        font-size: 2rem;
+        line-height: 1;
+    }
+</style>

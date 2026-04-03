@@ -29,3 +29,22 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+body {
+  background-color: #f8f9fa;
+}
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: #f8f9fa;
+  font-family: 'Inter', sans-serif;
+}
+
+#mainMenu a:hover {
+  background-color: #f1f3f5;
+  border-radius: 8px;
+  padding-left: 10px;
+  transition: 0.2s;
+}

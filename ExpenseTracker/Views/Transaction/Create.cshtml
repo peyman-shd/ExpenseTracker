@@ -1,147 +1,170 @@
 @model ExpenseTracker.Models.Transaction
 
-<h1>Add Transaction</h1>
+@{
+    ViewData["Title"] = "Create Transaction";
+}
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="Title" class="form-label"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-0">Add Transaction</h2>
+        <small class="text-muted">Create a new income, expense, or transfer</small>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Amount" class="form-label"></label>
-        <input asp-for="Amount" class="form-control" />
-        <span asp-validation-for="Amount" class="text-danger"></span>
-    </div>
+    <!-- Form Card -->
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-    <div class="mb-3">
-        <label asp-for="TransactionType" class="form-label"></label>
+            <form asp-action="Create" method="post">
 
-        <select asp-for="TransactionType" id="transactionType" class="form-control">
-            <option value="">Select Type</option>
-            <option value="Expense">Expense</option>
-            <option value="Income">Income</option>
-            <option value="Transfer">Transfer</option>
-        </select>
+                <!-- Validation Summary -->
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-        <span asp-validation-for="TransactionType" class="text-danger"></span>
-    </div>
+                <div class="row">
 
-    <div class="mb-3">
-        <label asp-for="Category" class="form-label"></label>
+                    <!-- Title -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Enter title..." />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
 
-        <select asp-for="Category" class="form-control">
-            <option value="">Optional</option>
-            <option value="Grocery">Grocery</option>
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Bills">Bills</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Health">Health</option>
-            <option value="Other">Other</option>
-        </select>
+                    <!-- Amount -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Amount" class="form-label fw-semibold"></label>
+                        <input asp-for="Amount" class="form-control" placeholder="Enter amount..." />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
 
-        <span asp-validation-for="Category" class="text-danger"></span>
-    </div>
+                    <!-- Transaction Type -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TransactionType" class="form-label fw-semibold"></label>
+                        <select asp-for="TransactionType" class="form-control" id="transactionType">
+                            <option value="">Select Type</option>
+                            <option value="Expense">Expense</option>
+                            <option value="Income">Income</option>
+                            <option value="Transfer">Transfer</option>
+                        </select>
+                        <span asp-validation-for="TransactionType" class="text-danger"></span>
+                    </div>
 
-    <div class="mb-3">
-        <label asp-for="TransactionDate" class="form-label"></label>
-        <input asp-for="TransactionDate" type="date" class="form-control" />
-        <span asp-validation-for="TransactionDate" class="text-danger"></span>
-    </div>
+                    <!-- Category -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Category" class="form-label fw-semibold"></label>
+                        <select asp-for="Category" class="form-control">
+                            <option value="">Optional</option>
+                            <option value="Grocery">Grocery</option>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health">Health</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
 
-    <div class="mb-3">
-        <label asp-for="CardId" class="form-label">Card</label>
+                    <!-- Date -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TransactionDate" class="form-label fw-semibold"></label>
+                        <input asp-for="TransactionDate" type="date" class="form-control" />
+                        <span asp-validation-for="TransactionDate" class="text-danger"></span>
+                    </div>
 
-        <select asp-for="CardId" class="form-control">
-            <option value="">Select Card</option>
+                    <!-- Card -->
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CardId" class="form-label fw-semibold">Card</label>
+                        <select asp-for="CardId" class="form-control">
+                            <option value="">Select Card</option>
+                            @foreach (var card in ViewBag.Cards)
+                            {
+                                <option value="@card.CardId">@card.CardName</option>
+                            }
+                        </select>
+                        <span asp-validation-for="CardId" class="text-danger"></span>
+                    </div>
 
-            @foreach (var card in ViewBag.Cards)
-            {
-                <option value="@card.CardId">@card.CardName</option>
-            }
+                    <!-- Transfer To Card -->
+                    <div class="col-md-6 mb-3" id="transferSection" style="display:none;">
+                        <label class="form-label fw-semibold">To Card</label>
+                        <select asp-for="ToCardId" class="form-control">
+                            <option value="">Select Destination Card</option>
+                            @foreach (var card in ViewBag.Cards)
+                            {
+                                <option value="@card.CardId">@card.CardName</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ToCardId" class="text-danger"></span>
+                    </div>
 
-        </select>
+                </div>
 
-        <span asp-validation-for="CardId" class="text-danger"></span>
-    </div>
+                <hr />
 
-    <div class="mb-3" id="toCardContainer" style="display:none;">
-        <label asp-for="ToCardId" class="form-label">To Card</label>
-        <select asp-for="ToCardId" class="form-control">
-            <option value="">Select Destination Card</option>
+                <!-- Installment Section -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input asp-for="IsInstallment" class="form-check-input" id="isInstallment" />
+                        <label class="form-check-label fw-semibold" for="isInstallment">
+                            This is an installment purchase
+                        </label>
+                    </div>
+                </div>
 
-            @foreach (var card in ViewBag.Cards)
-            {
-                <option value="@card.CardId">@card.CardName</option>
-            }
-        </select>
-    </div>
+                <div id="installmentFields" style="display:none;">
+                    <div class="row">
 
-    <div class="mb-3">
-        <label asp-for="IsInstallment" class="form-label"></label>
-        <input asp-for="IsInstallment" type="checkbox" class="form-check-input" id="isInstallment" />
-    </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="NumberOfInstallments" class="form-label fw-semibold"></label>
+                            <input asp-for="NumberOfInstallments" class="form-control" />
+                            <span asp-validation-for="NumberOfInstallments" class="text-danger"></span>
+                        </div>
 
-    <div id="installmentFields" style="display:none;">
-        <div class="mb-3">
-            <label asp-for="NumberOfInstallments" class="form-label"></label>
-            <input asp-for="NumberOfInstallments" class="form-control" />
-            <span asp-validation-for="NumberOfInstallments" class="text-danger"></span>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="InstallmentAmount" class="form-label fw-semibold"></label>
+                            <input asp-for="InstallmentAmount" class="form-control" />
+                            <span asp-validation-for="InstallmentAmount" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="InstallmentStartDate" class="form-label fw-semibold"></label>
+                            <input asp-for="InstallmentStartDate" type="date" class="form-control" />
+                            <span asp-validation-for="InstallmentStartDate" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success px-4">Save</button>
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+
+            </form>
         </div>
-
-        <div class="mb-3">
-            <label asp-for="InstallmentAmount" class="form-label"></label>
-            <input asp-for="InstallmentAmount" class="form-control" />
-            <span asp-validation-for="InstallmentAmount" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="InstallmentStartDate" class="form-label"></label>
-            <input asp-for="InstallmentStartDate" type="date" class="form-control" />
-            <span asp-validation-for="InstallmentStartDate" class="text-danger"></span>
-        </div>
     </div>
-
-    <button type="submit" class="btn btn-success">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</form>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const typeDropdown = document.getElementById("transactionType");
-        const toCardDiv = document.getElementById("toCardContainer");
-
-        function toggleToCard() {
-            if (typeDropdown.value === "Transfer") {
-                toCardDiv.style.display = "block";
-            } else {
-                toCardDiv.style.display = "none";
-            }
-        }
-
-        typeDropdown.addEventListener("change", toggleToCard);
-        
-        toggleToCard();
-    });
-</script>
+</div>
 
 @section Scripts {
-    <script>
-        const installmentCheckbox = document.getElementById("isInstallment");
-        const installmentFields = document.getElementById("installmentFields");
+<script>
+    const typeSelect = document.getElementById("transactionType");
+    const transferSection = document.getElementById("transferSection");
+    const installmentCheckbox = document.getElementById("isInstallment");
+    const installmentFields = document.getElementById("installmentFields");
 
-        function toggleInstallmentFields() {
-            if (installmentCheckbox.checked) {
-                installmentFields.style.display = "block";
-            } else {
-                installmentFields.style.display = "none";
-            }
+    typeSelect.addEventListener("change", function () {
+        if (this.value === "Transfer") {
+            transferSection.style.display = "block";
+        } else {
+            transferSection.style.display = "none";
         }
+    });
 
-        installmentCheckbox.addEventListener("change", toggleInstallmentFields);
-        toggleInstallmentFields();
-    </script>
+    installmentCheckbox.addEventListener("change", function () {
+        installmentFields.style.display = this.checked ? "block" : "none";
+    });
+</script>
 }

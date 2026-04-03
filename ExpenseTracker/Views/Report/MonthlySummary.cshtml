@@ -4,184 +4,298 @@
     ViewData["Title"] = "Monthly Summary";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Monthly Summary</h1>
+<div class="container mt-4">
 
-    <a asp-action="Charts"
-       asp-route-year="@Model.SelectedYear"
-       asp-route-month="@Model.SelectedMonth"
-       asp-route-cardId="@Model.SelectedCardId"
-       class="btn btn-outline-success">
-        📊 Charts
-    </a>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Monthly Summary</h2>
+            <small class="text-muted">Review monthly income, expenses, balances, and installment activity</small>
+        </div>
+
+        <a asp-action="Charts"
+           asp-route-year="@Model.SelectedYear"
+           asp-route-month="@Model.SelectedMonth"
+           asp-route-cardId="@Model.SelectedCardId"
+           class="btn btn-outline-success px-3">
+            📊 View Charts
+        </a>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+            <form asp-action="MonthlySummary" method="get">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Year</label>
+                        <input type="number" name="year" value="@Model.SelectedYear" class="form-control" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Month</label>
+                        <select name="month" class="form-control">
+                            @{
+                                var months = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
+                            }
+
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                if (i == Model.SelectedMonth)
+                                {
+                                    <option value="@i" selected>@months[i - 1]</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@months[i - 1]</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Card</label>
+                        <select name="cardId" class="form-control">
+                            <option value="">All Cards</option>
+
+                            @foreach (var card in Model.Cards)
+                            {
+                                if (Model.SelectedCardId == card.CardId)
+                                {
+                                    <option value="@card.CardId" selected>@card.CardName</option>
+                                }
+                                else
+                                {
+                                    <option value="@card.CardId">@card.CardName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <small class="text-uppercase text-muted fw-semibold">Total Income</small>
+                    <h3 class="fw-bold text-success mt-2 mb-1">$@Model.TotalIncome.ToString("N2")</h3>
+                    <small class="text-muted">Income for selected month</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <small class="text-uppercase text-muted fw-semibold">Total Expense</small>
+                    <h3 class="fw-bold text-danger mt-2 mb-1">$@Model.TotalExpense.ToString("N2")</h3>
+                    <small class="text-muted">Includes paid installments only</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <small class="text-uppercase text-muted fw-semibold">Monthly Net Balance</small>
+
+                    @if (Model.NetBalance >= 0)
+                    {
+                        <h3 class="fw-bold text-success mt-2 mb-1">$@Model.NetBalance.ToString("N2")</h3>
+                    }
+                    else
+                    {
+                        <h3 class="fw-bold text-danger mt-2 mb-1">$@Model.NetBalance.ToString("N2")</h3>
+                    }
+
+                    <small class="text-muted">Income minus expense</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <small class="text-uppercase text-muted fw-semibold">Overall Balance</small>
+
+                    @if (Model.OverallBalance >= 0)
+                    {
+                        <h3 class="fw-bold text-success mt-2 mb-1">$@Model.OverallBalance.ToString("N2")</h3>
+                    }
+                    else
+                    {
+                        <h3 class="fw-bold text-danger mt-2 mb-1">$@Model.OverallBalance.ToString("N2")</h3>
+                    }
+
+                    <small class="text-muted">Running balance up to selected month</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Section -->
+    <div class="mb-3">
+        <h3 class="fw-bold mb-0">Transactions</h3>
+        <small class="text-muted">All transactions for the selected month</small>
+    </div>
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th style="min-width: 160px;">Title</th>
+                        <th class="text-nowrap" style="min-width: 130px;">Amount</th>
+                        <th class="text-nowrap" style="min-width: 110px;">Type</th>
+                        <th style="min-width: 120px;">Category</th>
+                        <th class="text-nowrap" style="min-width: 130px;">Date</th>
+                        <th class="text-nowrap" style="min-width: 140px;">Card</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model.Transactions != null && Model.Transactions.Any())
+                    {
+                        @foreach (var transaction in Model.Transactions)
+                        {
+                            <tr>
+                                <td>@transaction.Title</td>
+
+                                <td class="text-nowrap">
+                                    @if (transaction.TransactionType == "Expense")
+                                    {
+                                        <span class="fw-semibold text-danger">$@transaction.Amount.ToString("N2")</span>
+                                    }
+                                    else if (transaction.TransactionType == "Income")
+                                    {
+                                        <span class="fw-semibold text-success">$@transaction.Amount.ToString("N2")</span>
+                                    }
+                                    else if (transaction.TransactionType == "Transfer")
+                                    {
+                                        <span class="fw-semibold text-primary">$@transaction.Amount.ToString("N2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-semibold">$@transaction.Amount.ToString("N2")</span>
+                                    }
+                                </td>
+
+                                <td class="text-nowrap">
+                                    @if (transaction.TransactionType == "Expense")
+                                    {
+                                        <span class="fw-semibold text-danger">Expense</span>
+                                    }
+                                    else if (transaction.TransactionType == "Income")
+                                    {
+                                        <span class="fw-semibold text-success">Income</span>
+                                    }
+                                    else if (transaction.TransactionType == "Transfer")
+                                    {
+                                        <span class="fw-semibold text-primary">Transfer</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@transaction.TransactionType</span>
+                                    }
+                                </td>
+
+                                <td>@transaction.Category</td>
+                                <td class="text-nowrap">@transaction.TransactionDate.ToString("yyyy-MM-dd")</td>
+                                <td class="text-nowrap">@transaction.Card?.CardName</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No transactions found for this month.
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Installments Section -->
+    <div class="mb-3">
+        <h3 class="fw-bold mb-0">Installments</h3>
+        <small class="text-muted">Installment payments for the selected month</small>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            @if (Model.Installments != null && Model.Installments.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th style="min-width: 160px;">Title</th>
+                            <th class="text-nowrap" style="min-width: 130px;">Card</th>
+                            <th class="text-nowrap" style="min-width: 130px;">Amount</th>
+                            <th class="text-nowrap" style="min-width: 110px;">Status</th>
+                            <th class="text-nowrap" style="min-width: 140px;">Remaining</th>
+                            <th class="text-nowrap" style="min-width: 140px;">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model.Installments)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td class="text-nowrap">@item.CardName</td>
+                                <td class="text-nowrap fw-semibold">$@item.Amount.ToString("N2")</td>
+
+                                <td class="text-nowrap">
+                                    @if (item.IsPaid)
+                                    {
+                                        <span class="fw-semibold text-success">Paid</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-semibold text-danger">Unpaid</span>
+                                    }
+                                </td>
+
+                                <td class="text-nowrap">$@item.RemainingAmount.ToString("N2")</td>
+
+                                <td class="text-nowrap">
+                                    @if (!item.IsPaid)
+                                    {
+                                        <form asp-action="MarkInstallmentAsPaid" method="post" class="m-0">
+                                            <input type="hidden" name="installmentPaymentId" value="@item.InstallmentPaymentId" />
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                Mark as Paid
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">No installments for this month.</p>
+            }
+        </div>
+    </div>
+
 </div>
-
-<form asp-action="MonthlySummary" method="get" class="mb-4">
-    <div class="row">
-        <div class="col-md-3">
-            <label class="form-label">Year</label>
-            <input type="number" name="year" value="@Model.SelectedYear" class="form-control" />
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label">Month</label>
-            <select name="month" class="form-control">
-                @{
-                    var months = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
-                }
-
-                @for (int i = 1; i <= 12; i++)
-                {
-                    if (i == Model.SelectedMonth)
-                    {
-                        <option value="@i" selected>@months[i - 1]</option>
-                    }
-                    else
-                    {
-                        <option value="@i">@months[i - 1]</option>
-                    }
-                }
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label">Card</label>
-            <select name="cardId" class="form-control">
-                <option value="">All Cards</option>
-
-                @foreach (var card in Model.Cards)
-                {
-                    if (Model.SelectedCardId == card.CardId)
-                    {
-                        <option value="@card.CardId" selected>@card.CardName</option>
-                    }
-                    else
-                    {
-                        <option value="@card.CardId">@card.CardName</option>
-                    }
-                }
-            </select>
-        </div>
-
-        <div class="col-md-3 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary">Filter</button>
-        </div>
-        
-    </div>
-</form>
-
-<div class="row">
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h4>Total Income</h4>
-            <p>$@Model.TotalIncome.ToString("N2")</p>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h4>Total Expense</h4>
-            <p>$@Model.TotalExpense.ToString("N2")</p>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h4>Monthly Net Balance</h4>
-            <p>$@Model.NetBalance.ToString("N2")</p>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h4>Overall Balance</h4>
-            <p>$@Model.OverallBalance.ToString("N2")</p>
-        </div>
-    </div>
-</div>
-
-<h3>Transactions</h3>
-
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th>Title</th>
-        <th>Amount</th>
-        <th>Type</th>
-        <th>Category</th>
-        <th>Date</th>
-        <th>Card</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var transaction in Model.Transactions)
-    {
-        <tr>
-            <td>@transaction.Title</td>
-            <td>$@transaction.Amount.ToString("N2")</td>
-            <td>@transaction.TransactionType</td>
-            <td>@transaction.Category</td>
-            <td>@transaction.TransactionDate.ToString("yyyy-MM-dd")</td>
-            <td>@transaction.Card?.CardName</td>
-        </tr>
-    }
-    </tbody>
-</table>
-
-<h3>Installments</h3>
-
-@if (Model.Installments != null && Model.Installments.Any())
-{
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Card</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Remaining</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in Model.Installments)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>@item.CardName</td>
-                <td>$@item.Amount.ToString("N2")</td>
-                <td>
-                    @if (item.IsPaid)
-                    {
-                        <span class="text-success">Paid</span>
-                    }
-                    else
-                    {
-                        <span class="text-warning">Unpaid</span>
-                    }
-                </td>
-                <td>
-                    $@item.RemainingAmount.ToString("N2")
-                </td>
-                <td>
-                    @if (!item.IsPaid)
-                    {
-                        <form asp-action="MarkInstallmentAsPaid" method="post">
-                            <input type="hidden" name="installmentPaymentId" value="@item.InstallmentPaymentId" />
-                            <button type="submit" class="btn btn-sm btn-success">Mark as Paid</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <span>-</span>
-                    }
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No installments for this month.</p>
-}

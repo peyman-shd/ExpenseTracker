@@ -41,7 +41,7 @@ public class TransactionController : Controller
         }
 
         var transactions = await transactionsQuery
-            .OrderBy(t => t.TransactionDate)
+            .OrderByDescending(t => t.TransactionDate)
             .ToListAsync();
 
         return View(transactions);
@@ -274,6 +274,18 @@ public class TransactionController : Controller
             return NotFound();
         }
 
+        var existingInstallments = await _context.InstallmentPayments
+            .Where(i => i.TransactionId == existingTransaction.TransactionId)
+            .ToListAsync();
+
+        var hasPaidInstallments = existingInstallments.Any(i => i.IsPaid);
+
+        if ((existingTransaction.IsInstallment || transaction.IsInstallment) && hasPaidInstallments)
+        {
+            TempData["ErrorMessage"] = "This installment transaction cannot be fully edited because some installments are already paid.";
+            return RedirectToAction(nameof(Edit), new { id = transaction.TransactionId });
+        }
+
         var oldSourceCard = await _context.Cards
             .FirstOrDefaultAsync(c => c.CardId == existingTransaction.CardId && c.UserId == userId);
 
@@ -367,7 +379,37 @@ public class TransactionController : Controller
         existingTransaction.InstallmentAmount = transaction.InstallmentAmount;
         existingTransaction.InstallmentStartDate = transaction.InstallmentStartDate;
 
+        if (existingInstallments.Any())
+        {
+            _context.InstallmentPayments.RemoveRange(existingInstallments);
+        }
+
         await _context.SaveChangesAsync();
+
+        if (existingTransaction.IsInstallment &&
+            existingTransaction.NumberOfInstallments.HasValue &&
+            existingTransaction.NumberOfInstallments.Value > 0 &&
+            existingTransaction.InstallmentAmount.HasValue &&
+            existingTransaction.InstallmentStartDate.HasValue)
+        {
+            for (int i = 0; i < existingTransaction.NumberOfInstallments.Value; i++)
+            {
+                var dueDate = existingTransaction.InstallmentStartDate.Value.AddMonths(i);
+
+                var installmentPayment = new InstallmentPayment
+                {
+                    TransactionId = existingTransaction.TransactionId,
+                    DueYear = dueDate.Year,
+                    DueMonth = dueDate.Month,
+                    Amount = existingTransaction.InstallmentAmount.Value,
+                    IsPaid = false
+                };
+
+                _context.InstallmentPayments.Add(installmentPayment);
+            }
+
+            await _context.SaveChangesAsync();
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -408,6 +450,19 @@ public class TransactionController : Controller
 
         if (transaction != null)
         {
+            var relatedInstallments = await _context.InstallmentPayments
+                .Where(i => i.TransactionId == transaction.TransactionId)
+                .ToListAsync();
+
+            var hasPaidInstallments = relatedInstallments.Any(i => i.IsPaid);
+
+            if (hasPaidInstallments)
+            {
+                TempData["ErrorMessage"] =
+                    "This installment transaction cannot be deleted because some installments are already paid.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var card = await _context.Cards
                 .FirstOrDefaultAsync(c => c.CardId == transaction.CardId && c.UserId == userId);
 
@@ -433,6 +488,11 @@ public class TransactionController : Controller
                         destinationCard.CurrentBalance -= transaction.Amount;
                     }
                 }
+            }
+
+            if (relatedInstallments.Any())
+            {
+                _context.InstallmentPayments.RemoveRange(relatedInstallments);
             }
 
             _context.Transactions.Remove(transaction);

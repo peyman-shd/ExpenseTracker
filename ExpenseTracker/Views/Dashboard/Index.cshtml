@@ -4,86 +4,129 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h1>Dashboard</h1>
+<div class="container mt-4">
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h4>Total Income</h4>
-            <p>$@Model.TotalIncome.ToString("N2")</p>
-        </div>
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-0">Dashboard</h2>
+        <small class="text-muted">Overview of your income, expenses, balances, and card debt</small>
     </div>
 
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h4>Total Expense</h4>
-            <p>$@Model.TotalExpense.ToString("N2")</p>
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <small class="text-uppercase text-muted fw-semibold">Total Income</small>
+                    <h3 class="fw-bold mt-2 mb-0 text-success">$@Model.TotalIncome.ToString("N2")</h3>
+                    <small class="text-muted">All income recorded for the current period</small>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <div class="card p-3 mb-3">
-            <h4>Net Balance</h4>
-            @if (Model.NetBalance >= 0)
-            {
-                <p class="text-success">$@Model.NetBalance.ToString("N2")</p>
-            }
-            else
-            {
-                <p class="text-danger">$@Model.NetBalance.ToString("N2")</p>
-            }
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <small class="text-uppercase text-muted fw-semibold">Total Expense</small>
+                    <h3 class="fw-bold mt-2 mb-0 text-danger">$@Model.TotalExpense.ToString("N2")</h3>
+                    <small class="text-muted">Expenses including paid installments only</small>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<h3>Card Summary</h3>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <small class="text-uppercase text-muted fw-semibold">Net Balance</small>
 
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th>Card Name</th>
-        <th>Card Type</th>
-        <th>Current Balance</th>
-        <th>Current Debt</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var card in Model.CardSummaries)
-    {
-        <tr>
-            <td>@card.CardName</td>
-            <td>@card.CardType</td>
-            <td>$@card.CurrentBalance.ToString("N2")</td>
-            <td>
-                @if (card.CardType == "Credit")
-                {
-                    @if (card.InstallmentPortion > 0)
+                    @if (Model.NetBalance >= 0)
                     {
-                        <div class="text-danger" style="font-size: 1.1em; font-weight: 700;">
-                            Regular: $@card.RegularDebt.ToString("N2")
-                        </div>
-
-                        <div style="font-size: 0.95em; font-weight: 600; margin-top: 4px;">
-                            Total: $@card.CurrentDebt.ToString("N2")
-                        </div>
-
-                        <div class="text-warning" style="font-size: 0.85em; margin-top: 2px;">
-                            Installment: $@card.InstallmentPortion.ToString("N2")
-                        </div>
+                        <h3 class="fw-bold mt-2 mb-0 text-success">$@Model.NetBalance.ToString("N2")</h3>
                     }
                     else
                     {
-                        <div>
-                            <strong>$@card.CurrentDebt.ToString("N2")</strong>
-                        </div>
+                        <h3 class="fw-bold mt-2 mb-0 text-danger">$@Model.NetBalance.ToString("N2")</h3>
                     }
-                }
-                else
-                {
-                    @:-
-                }
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+
+                    <small class="text-muted">Difference between total income and total expense</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Summary -->
+    <div class="mb-3">
+        <h3 class="fw-bold mb-0">Card Summary</h3>
+        <small class="text-muted">Current balance and debt details for each card</small>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th style="min-width: 180px;">Card Name</th>
+                        <th style="min-width: 140px;">Card Type</th>
+                        <th style="min-width: 180px;">Current Balance</th>
+                        <th style="min-width: 280px;">Current Debt</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model.CardSummaries != null && Model.CardSummaries.Any())
+                    {
+                        @foreach (var card in Model.CardSummaries)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@card.CardName</td>
+                                <td>@card.CardType</td>
+                                <td class="fw-semibold">$@card.CurrentBalance.ToString("N2")</td>
+                                <td>
+                                    @if (card.CardType == "Credit")
+                                    {
+                                        @if (card.InstallmentPortion > 0)
+                                        {
+                                            <div class="border rounded overflow-hidden bg-white">
+                                                <div class="px-3 py-2 border-bottom">
+                                                    <span class="fw-semibold text-danger">Regular:</span>
+                                                    <span class="fw-bold text-danger">$@card.RegularDebt.ToString("N2")</span>
+                                                </div>
+
+                                                <div class="px-3 py-2 border-bottom">
+                                                    <span class="fw-semibold">Total:</span>
+                                                    <span class="fw-bold">$@card.CurrentDebt.ToString("N2")</span>
+                                                </div>
+
+                                                <div class="px-3 py-2">
+                                                    <span class="fw-semibold text-secondary">Installment:</span>
+                                                    <span class="fw-semibold text-secondary">$@card.InstallmentPortion.ToString("N2")</span>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="fw-bold">$@card.CurrentDebt.ToString("N2")</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No card data available.
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

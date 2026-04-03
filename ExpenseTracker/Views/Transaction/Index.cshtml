@@ -1,62 +1,175 @@
 @model List<ExpenseTracker.Models.Transaction>
 
-<h1>Transactions</h1>
+@{
+    ViewData["Title"] = "Transactions";
+}
 
-<form asp-action="Index" method="get" class="mb-3">
-    <div class="row">
-        <div class="col-md-4">
-            <label class="form-label">Filter by Card</label>
-            <select name="cardId" class="form-control" onchange="this.form.submit()">
-                <option value="">All Cards</option>
+<div class="container mt-4">
 
-                @foreach (var card in ViewBag.Cards)
-                {
-                    if (ViewBag.SelectedCardId != null && ViewBag.SelectedCardId == card.CardId)
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Transactions</h2>
+            <small class="text-muted">Track your income, expenses, and transfers</small>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary px-4 py-2">
+            + Add Transaction
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+            <form asp-action="Index" method="get">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold mb-2">Filter by Card</label>
+                        <select name="cardId" class="form-control" onchange="this.form.submit()">
+                            <option value="">All Cards</option>
+
+                            @foreach (var card in ViewBag.Cards)
+                            {
+                                if (ViewBag.SelectedCardId != null && ViewBag.SelectedCardId == card.CardId)
+                                {
+                                    <option value="@card.CardId" selected>@card.CardName</option>
+                                }
+                                else
+                                {
+                                    <option value="@card.CardId">@card.CardName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th style="min-width: 170px;">Title</th>
+                        <th class="text-nowrap" style="min-width: 140px;">Amount</th>
+                        <th class="text-nowrap" style="min-width: 110px;">Type</th>
+                        <th style="min-width: 130px;">Category</th>
+                        <th class="text-nowrap" style="min-width: 130px;">Date</th>
+                        <th class="text-nowrap" style="min-width: 140px;">Card</th>
+                        <th class="text-nowrap" style="min-width: 130px;">Installment</th>
+                        <th class="text-nowrap" style="min-width: 150px;">Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    @if (Model != null && Model.Any())
                     {
-                        <option value="@card.CardId" selected>@card.CardName</option>
+                        @foreach (var transaction in Model)
+                        {
+                            <tr>
+                                <td>@transaction.Title</td>
+
+                                <td class="text-nowrap">
+                                    @if (transaction.TransactionType == "Expense")
+                                    {
+                                        <span class="fw-semibold text-danger">
+                                            $@transaction.Amount.ToString("N2")
+                                        </span>
+                                    }
+                                    else if (transaction.TransactionType == "Income")
+                                    {
+                                        <span class="fw-semibold text-success">
+                                            $@transaction.Amount.ToString("N2")
+                                        </span>
+                                    }
+                                    else if (transaction.TransactionType == "Transfer")
+                                    {
+                                        <span class="fw-semibold text-primary">
+                                            $@transaction.Amount.ToString("N2")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-semibold">
+                                            $@transaction.Amount.ToString("N2")
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="text-nowrap">
+                                    @if (transaction.TransactionType == "Expense")
+                                    {
+                                        <span class="fw-semibold text-danger">Expense</span>
+                                    }
+                                    else if (transaction.TransactionType == "Income")
+                                    {
+                                        <span class="fw-semibold text-success">Income</span>
+                                    }
+                                    else if (transaction.TransactionType == "Transfer")
+                                    {
+                                        <span class="fw-semibold text-primary">Transfer</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@transaction.TransactionType</span>
+                                    }
+                                </td>
+
+                                <td>@transaction.Category</td>
+
+                                <td class="text-nowrap">
+                                    @transaction.TransactionDate.ToString("yyyy-MM-dd")
+                                </td>
+
+                                <td class="text-nowrap">
+                                    @transaction.Card?.CardName
+                                </td>
+
+                                <td class="text-nowrap">
+                                    @if (transaction.IsInstallment)
+                                    {
+                                        <span class="text-muted fw-semibold">Installment</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+
+                                <td class="text-nowrap">
+                                    <a asp-action="Edit"
+                                       asp-route-id="@transaction.TransactionId"
+                                       class="btn btn-warning btn-sm me-2">
+                                        Edit
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                       asp-route-id="@transaction.TransactionId"
+                                       class="btn btn-danger btn-sm">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        }
                     }
                     else
                     {
-                        <option value="@card.CardId">@card.CardName</option>
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                No transactions found.
+                            </td>
+                        </tr>
                     }
-                }
-            </select>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</form>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Add Transaction</a>
-</p>
-
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th>Title</th>
-        <th>Amount</th>
-        <th>Type</th>
-        <th>Category</th>
-        <th>Date</th>
-        <th>Card</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var transaction in Model)
-    {
-        <tr>
-            <td>@transaction.Title</td>
-            <td>@transaction.Amount</td>
-            <td>@transaction.TransactionType</td>
-            <td>@transaction.Category</td>
-            <td>@transaction.TransactionDate.ToString("yyyy-MM-dd")</td>
-            <td>@transaction.Card.CardName</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@transaction.TransactionId" class="btn btn-warning btn-sm">Edit</a>
-
-                <a asp-action="Delete" asp-route-id="@transaction.TransactionId" class="btn btn-danger btn-sm">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+</div>
