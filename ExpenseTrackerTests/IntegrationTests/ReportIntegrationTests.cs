@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace ExpenseTrackerTests;
+namespace ExpenseTrackerTests.IntegrationTests;
 
 public class ReportIntegrationTests
 {

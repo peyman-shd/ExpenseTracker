@@ -1,0 +1,18 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1fd7f90e_002D7bc2_002D46f7_002Dac15_002Dd44cbce12a1e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TransactionLogicTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.TransactionLogicTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.TransferLogicTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.CardLogicTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.InstallmentLogicTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.DashboardReportTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.ReportIntegrationTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.UnitTests.DashboardReportTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.UnitTests.InstallmentLogicTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.UnitTests.TransactionLogicTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.UnitTests.TransferLogicTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.TransactionIntegrationTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.IntegrationTests.CardIntegrationTests.Create_Card_Should_Save_Card_And_Assign_UserId&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::0459C784-57D2-418E-B189-40E22976D2A7::net9.0::ExpenseTrackerTests.IntegrationTests.CardIntegrationTests&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

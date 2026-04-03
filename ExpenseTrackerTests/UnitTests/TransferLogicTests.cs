@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace ExpenseTrackerTests;
+namespace ExpenseTrackerTests.UnitTests;
 
 public class TransferLogicTests
 {
