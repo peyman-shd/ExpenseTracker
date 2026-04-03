@@ -1,34 +1,80 @@
 @model List<ExpenseTracker.Models.Card>
 
-<h1>Cards</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Cards</h2>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Add Card</a>
-</p>
+    <a asp-action="Create" class="btn btn-primary px-4">
+        + Add Card
+    </a>
+</div>
 
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th>Card Name</th>
-        <th>Limit</th>
-        <th>Balance</th>
-        <th>Type</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var card in Model)
-    {
-        <tr>
-            <td>@card.CardName</td>
-            <td>@card.Limit</td>
-            <td>@card.CurrentBalance</td>
-            <td>@card.CardType</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@card.CardId" class="btn btn-warning btn-sm">Edit</a>
-                <a asp-action="Delete" asp-route-id="@card.CardId" class="btn btn-danger btn-sm">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+                <th>Card Name</th>
+                <th>Limit</th>
+                <th>Balance</th>
+                <th>Type</th>
+                <th class="text-end">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var card in Model)
+            {
+                <tr>
+                    <td class="fw-medium">@card.CardName</td>
+
+                    <td>
+                        @if (card.Limit != null)
+                        {
+                            <span>$@card.Limit.Value.ToString("N2")</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+
+                    <td class="fw-semibold">
+                        $@card.CurrentBalance.ToString("N2")
+                    </td>
+
+                    <td>
+                        @if (card.CardType == "Credit")
+                        {
+                            <span class="text-primary fw-medium">Credit</span>
+                        }
+                        else if (card.CardType == "Debit")
+                        {
+                            <span class="text-success fw-medium">Debit</span>
+                        }
+                        else if (card.CardType == "Cash")
+                        {
+                            <span class="text-secondary fw-medium">Cash</span>
+                        }
+                        else
+                        {
+                            <span>@card.CardType</span>
+                        }
+                    </td>
+
+                    <td class="text-end">
+                        <a asp-action="Edit" asp-route-id="@card.CardId"
+                           class="btn btn-sm btn-outline-warning me-2">
+                            Edit
+                        </a>
+
+                        <a asp-action="Delete" asp-route-id="@card.CardId"
+                           class="btn btn-sm btn-outline-danger">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

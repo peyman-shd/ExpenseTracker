@@ -1,34 +1,67 @@
 @model ExpenseTracker.Models.Card
 
-<h1>Edit Card</h1>
+@{
+    ViewData["Title"] = "Edit Card";
+}
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="CardId" />
+<div class="container mt-4">
 
-    <div class="mb-3">
-        <label asp-for="CardName" class="form-label"></label>
-        <input asp-for="CardName" class="form-control" />
-        <span asp-validation-for="CardName" class="text-danger"></span>
+    <div class="mb-4">
+        <h2 class="fw-bold mb-0">Edit Card</h2>
+        <small class="text-muted">Update your card details</small>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Limit" class="form-label"></label>
-        <input asp-for="Limit" class="form-control" />
-        <span asp-validation-for="Limit" class="text-danger"></span>
-    </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
 
-    <div class="mb-3">
-        <label asp-for="CurrentBalance" class="form-label"></label>
-        <input asp-for="CurrentBalance" class="form-control" />
-        <span asp-validation-for="CurrentBalance" class="text-danger"></span>
-    </div>
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="CardId" />
 
-    <div class="mb-3">
-        <label asp-for="CardType" class="form-label"></label>
-        <input asp-for="CardType" class="form-control" />
-        <span asp-validation-for="CardType" class="text-danger"></span>
-    </div>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-    <button type="submit" class="btn btn-success">Save Changes</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</form>
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CardName" class="form-label fw-semibold"></label>
+                        <input asp-for="CardName" class="form-control" placeholder="Enter card name..." />
+                        <span asp-validation-for="CardName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CardType" class="form-label fw-semibold"></label>
+                        <select asp-for="CardType" class="form-control">
+                            <option value="">Select card type</option>
+                            <option value="Debit">Debit</option>
+                            <option value="Credit">Credit</option>
+                            <option value="Cash">Cash</option>
+                        </select>
+                        <span asp-validation-for="CardType" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CurrentBalance" class="form-label fw-semibold"></label>
+                        <input asp-for="CurrentBalance" class="form-control" placeholder="Enter current balance..." />
+                        <span asp-validation-for="CurrentBalance" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Limit" class="form-label fw-semibold"></label>
+                        <input asp-for="Limit" class="form-control" placeholder="Enter card limit (for credit cards)" />
+                        <span asp-validation-for="Limit" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success px-4">Save Changes</button>
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
